@@ -154,40 +154,45 @@ public class NumberRules {
                     numberRule.addRule(category, rule);
                 }
             }
-            Number number = null;
-            switch(numberRule.countRules()) {
-            case 0:
-                number = OTHER_NUMBER_RULE;
-                break;
-            case 1:
-                Rule rule = numberRule.getRule(Category.one);
-                if (rule != null) {
-                    if (null != rule.toString()) switch (rule.toString()) {
-                    case "n is 1":
-                        number = PLURAL_NUMBER_RULE;
-                        break;
-                    case "n in 0..1":
-                        number = ZERO_ONE_NUMBER_RULE;
-                        break;
-                }
-                }
-                break;
-            case 2:
-                Rule oneRule = numberRule.getRule(Category.one);
-                Rule twoRule = numberRule.getRule(Category.two);
-                if (oneRule != null
-                    && "n is 1".equals(oneRule.toString())
-                    && twoRule != null
-                    && "n is 2".equals(twoRule.toString())) {
-                    number = DUAL_NUMBER_RULE;
-                }
-                break;
-            default:
-                number = numberRule;
-            }
-            for (String locale : locales) {
+            Number number = childNumber(numberRule);
+			for (String locale : locales) {
                 numberMap.put(locale, number);
             }
         }
     }
+
+
+	private static Number childNumber(DefaultNumberRule numberRule) {
+		Number number = null;
+		switch (numberRule.countRules()) {
+		case 0:
+			number = OTHER_NUMBER_RULE;
+			break;
+		case 1:
+			Rule rule = numberRule.getRule(Category.one);
+			if (rule != null) {
+				if (null != rule.toString())
+					switch (rule.toString()) {
+					case "n is 1":
+						number = PLURAL_NUMBER_RULE;
+						break;
+					case "n in 0..1":
+						number = ZERO_ONE_NUMBER_RULE;
+						break;
+					}
+			}
+			break;
+		case 2:
+			Rule oneRule = numberRule.getRule(Category.one);
+			Rule twoRule = numberRule.getRule(Category.two);
+			if (oneRule != null && "n is 1".equals(oneRule.toString()) && twoRule != null
+					&& "n is 2".equals(twoRule.toString())) {
+				number = DUAL_NUMBER_RULE;
+			}
+			break;
+		default:
+			number = numberRule;
+		}
+		return number;
+	}
 }
