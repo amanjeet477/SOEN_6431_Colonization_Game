@@ -3,7 +3,7 @@
   associations="true" dependencies="true" nesting-relationships="true" router="FAN">  
   <class id="1" language="java" name="net.sf.freecol.common.model.BuildingType" project="Col_new" 
     file="/Col_new/src/net/sf/freecol/common/model/BuildingType.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="423" y="191"/>    
+    <position height="-1" width="-1" x="397" y="161"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="true"/>      
@@ -21,7 +21,7 @@
   </class>  
   <enumeration id="3" language="java" name="net.sf.freecol.common.model.Colony.NoBuildReason" project="Col_new" 
     file="/Col_new/src/net/sf/freecol/common/model/Colony.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="215" y="227"/>    
+    <position height="-1" width="-1" x="175" y="245"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -30,7 +30,7 @@
   </enumeration>  
   <class id="4" language="java" name="net.sf.freecol.common.model.BuildableType" project="Col_new" 
     file="/Col_new/src/net/sf/freecol/common/model/BuildableType.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="661" y="237"/>    
+    <position height="-1" width="-1" x="670" y="239"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="false" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="false" package="false" protected="false" private="false" static="true"/>      
@@ -41,40 +41,52 @@
     <end type="SOURCE" refId="2"/>    
     <end type="TARGET" refId="1"/>  
   </dependency>  
-  <association id="6">    
-    <bendpoint x="423" y="255"/>    
-    <bendpoint x="509" y="255"/>    
-    <bendpoint x="512" y="196"/>    
+  <dependency id="6">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <association id="7">    
+    <bendpoint x="397" y="225"/>    
+    <bendpoint x="483" y="225"/>    
+    <bendpoint x="486" y="166"/>    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="7" name="upgradesTo"/>      
-      <multiplicity id="8" minimum="0" maximum="1"/>    
+      <attribute id="8" name="upgradesTo"/>      
+      <multiplicity id="9" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <dependency id="9">    
+  <dependency id="10">    
     <end type="SOURCE" refId="2"/>    
     <end type="TARGET" refId="4"/>  
   </dependency>  
-  <association id="10">    
-    <bendpoint x="450" y="245"/>    
-    <bendpoint x="491" y="243"/>    
-    <bendpoint x="501" y="207"/>    
+  <association id="11">    
+    <bendpoint x="424" y="215"/>    
+    <bendpoint x="465" y="213"/>    
+    <bendpoint x="475" y="177"/>    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="11" name="upgradesFrom"/>      
-      <multiplicity id="12" minimum="0" maximum="1"/>    
+      <attribute id="12" name="upgradesFrom"/>      
+      <multiplicity id="13" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <generalization id="13">    
+  <dependency id="14">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="1"/>  
+  </dependency>  
+  <generalization id="15">    
     <end type="SOURCE" refId="1"/>    
     <end type="TARGET" refId="4"/>  
   </generalization>  
-  <nesting id="14">    
+  <nesting id="16">    
     <end type="SOURCE" refId="2"/>    
     <end type="TARGET" refId="3"/>  
   </nesting>  
+  <dependency id="17">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="3"/>  
+  </dependency>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
     sort-features="false" accessors="true" visibility="true">    
     <attributes public="true" package="true" protected="true" private="true" static="true"/>    
