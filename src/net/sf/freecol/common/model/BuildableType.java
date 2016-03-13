@@ -33,6 +33,8 @@ import javax.xml.stream.XMLStreamException;
 import net.sf.freecol.common.io.FreeColXMLReader;
 import net.sf.freecol.common.io.FreeColXMLWriter;
 import net.sf.freecol.common.model.StringTemplate;
+import net.sf.freecol.common.model.Colony.NoBuildReason;
+
 import static net.sf.freecol.common.util.CollectionUtils.*;
 
 
@@ -337,4 +339,47 @@ public abstract class BuildableType extends FreeColGameObjectType {
             super.readChild(xr);
         }
     }
+    public NoBuildReason getNoBuildReason(List<BuildableType> assumeBuilt, Colony colony) {
+		if (this == null) {
+			return NoBuildReason.NOT_BUILDING;
+		} else if (!needsGoodsToBuild()) {
+			return NoBuildReason.NOT_BUILDABLE;
+		} else if (getRequiredPopulation() > colony.getUnitCount()) {
+			return NoBuildReason.POPULATION_TOO_SMALL;
+		} else if (hasAbility(Ability.COASTAL_ONLY) && !colony.getTile().isCoastland()) {
+			return NoBuildReason.COASTAL;
+		} else {
+			if (!all(getRequiredAbilities().entrySet(), null)) {
+				return NoBuildReason.MISSING_ABILITY;
+			}
+			if (!all(getLimits(), null)) {
+				return NoBuildReason.LIMIT_EXCEEDED;
+			}
+		}
+		if (assumeBuilt == null) {
+			assumeBuilt = Collections.<BuildableType> emptyList();
+		}
+		if (this instanceof BuildingType) {
+			BuildingType newBuildingType = (BuildingType) this;
+			Building colonyBuilding = colony.getBuilding(newBuildingType);
+			if (colonyBuilding == null) {
+				BuildingType from = newBuildingType.getUpgradesFrom();
+				if (from != null && !assumeBuilt.contains(from)) {
+					return NoBuildReason.WRONG_UPGRADE;
+				}
+			} else {
+				BuildingType from = colonyBuilding.getType().getUpgradesTo();
+				if (from != newBuildingType && !assumeBuilt.contains(from)) {
+					return NoBuildReason.WRONG_UPGRADE;
+				}
+			}
+		} else if (this instanceof UnitType) {
+			if (!hasAbility(Ability.PERSON) && !colony.hasAbility(Ability.BUILD, this) && none(assumeBuilt, null)) {
+				return NoBuildReason.MISSING_BUILD_ABILITY;
+			}
+		}
+		return NoBuildReason.NONE;
+	}
 }
+
+
