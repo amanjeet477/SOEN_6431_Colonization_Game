@@ -62,7 +62,9 @@ import org.w3c.dom.Element;
  */
 public class Player extends FreeColGameObject implements Nameable {
 
-    private static final Logger logger = Logger.getLogger(Player.class.getName());
+    private PlayerProduct playerProduct = new PlayerProduct();
+
+	private static final Logger logger = Logger.getLogger(Player.class.getName());
     //
     // Types
     //
@@ -468,13 +470,6 @@ public class Player extends FreeColGameObject implements Nameable {
 
     /** The settlements this player owns. */
     protected final List<Settlement> settlements = new ArrayList<>();
-
-    /** The tiles the player can see. */
-    private boolean[][] canSeeTiles = null;
-    /** Are the canSeeTiles valid or do they need to be recalculated? */
-    private boolean canSeeValid = false;
-    /** Do not access canSeeTiles without taking canSeeLock. */
-    private final Object canSeeLock = new Object();
 
     /** A container for the abilities and modifiers of this type. */
     protected final FeatureContainer featureContainer = new FeatureContainer();
@@ -2636,10 +2631,7 @@ public class Player extends FreeColGameObject implements Nameable {
      * FreeColServer is gone.
      */
     public void initializeHighSeas() {
-        Game game = getGame();
-        highSeas = new HighSeas(game);
-        if (europe != null) highSeas.addDestination(europe);
-        if (game.getMap() != null ) highSeas.addDestination(game.getMap());
+        playerProduct.initializeHighSeas(this, europe);
     }
 
     /**
@@ -2651,16 +2643,7 @@ public class Player extends FreeColGameObject implements Nameable {
      * @return True if this player can see the given <code>Tile</code>.
      */
     public boolean canSee(Tile tile) {
-        if (tile == null) return false;
-
-        do {
-            synchronized (canSeeLock) {
-                if (canSeeValid) {
-                    return canSeeTiles[tile.getX()][tile.getY()];
-                }
-            }
-        } while (resetCanSeeTiles());
-        return false;
+        return playerProduct.canSee(tile, this);
     }
 
     /**
@@ -2705,30 +2688,7 @@ public class Player extends FreeColGameObject implements Nameable {
      * By convention, we try to avoid cs* routines being -vis.
      */
     public void invalidateCanSeeTiles() {
-        synchronized (canSeeLock) {
-            canSeeValid = false;
-        }
-    }
-
-    /**
-     * Resets this player's "can see"-tiles.  This is done by setting
-     * all the tiles within each {@link Unit} and {@link Settlement}s
-     * line of sight visible.  The other tiles are made invisible.
-     *
-     * Use {@link #invalidateCanSeeTiles} whenever possible.
-     *
-     * @return True if successful.
-     */
-    private boolean resetCanSeeTiles() {
-        Map map = getGame().getMap();
-        if (map == null) return false;
-
-        boolean[][] cST = makeCanSeeTiles(map);
-        synchronized (canSeeLock) {
-            canSeeTiles = cST;
-            canSeeValid = true;
-        }
-        return true;
+        playerProduct.invalidateCanSeeTiles();
     }
 
     /**
@@ -2754,12 +2714,12 @@ public class Player extends FreeColGameObject implements Nameable {
      * @param map The <code>Map</code> to use.
      * @return A canSeeTiles array.
      */
-    private boolean[][] makeCanSeeTiles(Map map) {
+    public boolean[][] makeCanSeeTiles(Map map) {
         final Specification spec = getSpecification();
         // Simple case when there is no fog of war: a tile is
         // visible once it is explored.
         if (!spec.getBoolean(GameOptions.FOG_OF_WAR)) {
-            boolean[][] cST = (canSeeTiles != null) ? canSeeTiles
+            boolean[][] cST = (playerProduct.getCanSeeTiles() != null) ? playerProduct.getCanSeeTiles()
                 : new boolean[map.getWidth()][map.getHeight()];
             for (Tile t : getGame().getMap().getAllTiles()) {
                 if (t != null) {
@@ -4268,4 +4228,8 @@ public class Player extends FreeColGameObject implements Nameable {
     public static String getXMLElementTagName() {
         return "player";
     }
+
+	public void setHighSeas(HighSeas highSeas) {
+		this.highSeas = highSeas;
+	}
 }
